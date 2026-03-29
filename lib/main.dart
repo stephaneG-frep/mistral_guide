@@ -6,6 +6,7 @@ import 'screens/api_screen.dart';
 import 'screens/prompts_screen.dart';
 import 'screens/features_screen.dart';
 import 'screens/chat_screen.dart';
+import 'screens/playground_screen.dart';
 
 // ─── Thèmes ──────────────────────────────────────────────────────────────────
 class AppThemes {
@@ -91,6 +92,7 @@ class ThemeConfig {
       NavItem(icon: Icons.auto_awesome_outlined, label: 'Prompts',         color: Color(0xFFFFAB40)),
       NavItem(icon: Icons.star_outline,          label: 'Fonctionnalités', color: Color(0xFFE64A19)),
       NavItem(icon: Icons.chat_bubble_outline,   label: 'Chat Mistral',    color: Color(0xFFFF6D00)),
+      NavItem(icon: Icons.science_outlined,      label: 'Playground',      color: Color(0xFFFFAB40)),
     ],
   );
 
@@ -111,6 +113,7 @@ class ThemeConfig {
       NavItem(icon: Icons.auto_awesome_outlined, label: 'Prompts',         color: Color(0xFFF57C00)),
       NavItem(icon: Icons.star_outline,          label: 'Fonctionnalités', color: Color(0xFFE64A19)),
       NavItem(icon: Icons.chat_bubble_outline,   label: 'Chat Mistral',    color: Color(0xFFBF360C)),
+      NavItem(icon: Icons.science_outlined,      label: 'Playground',      color: Color(0xFFE64A19)),
     ],
   );
 }
@@ -157,10 +160,29 @@ class _MainScaffoldState extends State<MainScaffold> {
     PromptsScreen(),
     FeaturesScreen(),
     ChatScreen(),
+    PlaygroundScreen(),
   ];
 
   ThemeConfig get _cfg =>
       themeNotifier.value == AppTheme.darkOrange ? ThemeConfig.darkOrange : ThemeConfig.lightOrange;
+
+  @override
+  void initState() {
+    super.initState();
+    mistralNavIndex.addListener(_onNavChange);
+  }
+
+  @override
+  void dispose() {
+    mistralNavIndex.removeListener(_onNavChange);
+    super.dispose();
+  }
+
+  void _onNavChange() {
+    if (mistralNavIndex.value != _selectedIndex) {
+      setState(() => _selectedIndex = mistralNavIndex.value);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -168,6 +190,7 @@ class _MainScaffoldState extends State<MainScaffold> {
       valueListenable: themeNotifier,
       builder: (context, _, _) => Scaffold(
         appBar: AppBar(
+          iconTheme: const IconThemeData(color: Colors.white),
           title: Row(
             children: [
               Container(
@@ -208,7 +231,6 @@ class _MainScaffoldState extends State<MainScaffold> {
         children: [
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(20, 52, 20, 24),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -216,7 +238,11 @@ class _MainScaffoldState extends State<MainScaffold> {
                 colors: cfg.headerGradient,
               ),
             ),
-            child: Column(
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+                child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
@@ -245,6 +271,8 @@ class _MainScaffoldState extends State<MainScaffold> {
                   style: TextStyle(color: Colors.white.withValues(alpha: 0.72), fontSize: 13),
                 ),
               ],
+                ),
+              ),
             ),
           ),
 
@@ -341,13 +369,16 @@ class _MainScaffoldState extends State<MainScaffold> {
             ),
           ),
 
-          Padding(
-            padding: const EdgeInsets.only(bottom: 14),
-            child: Text(
-              'v1.0 • Mistral AI Guide',
-              style: TextStyle(
-                color: cfg.footerText.withValues(alpha: 0.6),
-                fontSize: 11,
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 14),
+              child: Text(
+                'v2.0 • Mistral AI Guide',
+                style: TextStyle(
+                  color: cfg.footerText.withValues(alpha: 0.6),
+                  fontSize: 11,
+                ),
               ),
             ),
           ),

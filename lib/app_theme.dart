@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 final themeNotifier = ValueNotifier<AppTheme>(AppTheme.darkOrange);
+final mistralNavIndex = ValueNotifier<int>(0);
+final pendingPromptNotifier = ValueNotifier<String?>(null);
 
 enum AppTheme { darkOrange, lightOrange }
 

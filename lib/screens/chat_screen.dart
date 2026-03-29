@@ -18,13 +18,19 @@ class _ChatScreenState extends State<ChatScreen> {
 
   String _apiKey    = '';
   bool   _isLoading = false;
+  String _selectedModel = 'mistral-large-latest';
 
   bool get _showKeySetup => _apiKey.isEmpty;
 
   final List<_Msg> _display = [];
   final List<Map<String, String>> _history = [];
 
-  static const _model     = 'mistral-large-latest';
+  static const _models = [
+    'mistral-large-latest',
+    'mistral-small-latest',
+    'codestral-latest',
+    'open-mistral-7b',
+  ];
   static const _maxTokens = 2048;
   static const _prefKey   = 'mistral_api_key';
   static const _storage   = FlutterSecureStorage();
@@ -33,6 +39,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
     _loadKey();
+    pendingPromptNotifier.addListener(_onPendingPrompt);
   }
 
   @override
@@ -40,7 +47,16 @@ class _ChatScreenState extends State<ChatScreen> {
     _inputController.dispose();
     _keyController.dispose();
     _scrollController.dispose();
+    pendingPromptNotifier.removeListener(_onPendingPrompt);
     super.dispose();
+  }
+
+  void _onPendingPrompt() {
+    final prompt = pendingPromptNotifier.value;
+    if (prompt != null) {
+      _inputController.text = prompt;
+      pendingPromptNotifier.value = null;
+    }
   }
 
   Future<void> _loadKey() async {
@@ -96,7 +112,7 @@ class _ChatScreenState extends State<ChatScreen> {
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
-          'model': _model,
+          'model': _selectedModel,
           'max_tokens': _maxTokens,
           'messages': [
             {
@@ -276,25 +292,19 @@ class _ChatScreenState extends State<ChatScreen> {
           color: barBg,
           child: Row(
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: context.primary.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: context.primary.withValues(alpha: 0.4)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.auto_awesome, size: 12, color: context.accentLight),
-                    const SizedBox(width: 4),
-                    Text(_model,
-                        style: TextStyle(
-                          color: context.accentLight,
-                          fontSize: 11,
-                          fontFamily: 'monospace',
-                        )),
-                  ],
+              DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: _selectedModel,
+                  isDense: true,
+                  dropdownColor: context.cardBg,
+                  icon: Icon(Icons.expand_more, size: 14, color: context.accentLight),
+                  items: _models.map((m) => DropdownMenuItem(
+                    value: m,
+                    child: Text(m, style: TextStyle(color: context.accentLight, fontSize: 11, fontFamily: 'monospace')),
+                  )).toList(),
+                  onChanged: (v) {
+                    if (v != null) setState(() => _selectedModel = v);
+                  },
                 ),
               ),
               const Spacer(),
@@ -352,7 +362,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 fontSize: 15,
               )),
           const SizedBox(height: 6),
-          Text('Modèle : $_model',
+          Text('Modèle : $_selectedModel',
               style: TextStyle(
                 color: context.isLight
                     ? const Color(0xFF8D6030).withValues(alpha: 0.6)

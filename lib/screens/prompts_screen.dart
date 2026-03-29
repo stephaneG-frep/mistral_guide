@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../app_theme.dart';
 
+void _sendToChat(String promptText) {
+  pendingPromptNotifier.value = promptText;
+  mistralNavIndex.value = 5;
+}
+
 class PromptsScreen extends StatefulWidget {
   const PromptsScreen({super.key});
 
@@ -188,35 +193,56 @@ class _PromptCardState extends State<_PromptCard> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      onTap: () {
-                        Clipboard.setData(ClipboardData(text: widget.prompt.text));
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: const Text('Prompt copié !'),
-                          backgroundColor: context.primary,
-                          duration: const Duration(seconds: 1),
-                        ));
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: widget.color.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: widget.color.withValues(alpha: 0.4)),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.copy, size: 13, color: context.accentLight),
-                            const SizedBox(width: 5),
-                            Text('Copier le prompt',
-                                style: TextStyle(color: context.accentLight, fontSize: 12)),
-                          ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Clipboard.setData(ClipboardData(text: widget.prompt.text));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: const Text('Prompt copié !'),
+                            backgroundColor: context.primary,
+                            duration: const Duration(seconds: 1),
+                          ));
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: widget.color.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: widget.color.withValues(alpha: 0.4)),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.copy, size: 13, color: context.accentLight),
+                              const SizedBox(width: 4),
+                              Text('Copier', style: TextStyle(color: context.accentLight, fontSize: 12)),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
+                      const SizedBox(width: 8),
+                      GestureDetector(
+                        onTap: () => _sendToChat(widget.prompt.text),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: context.primary.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: context.primary.withValues(alpha: 0.4)),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.send, size: 13, color: context.primary),
+                              const SizedBox(width: 4),
+                              Text('Envoyer au Chat', style: TextStyle(color: context.primary, fontSize: 12)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
