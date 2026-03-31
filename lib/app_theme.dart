@@ -28,6 +28,7 @@ extension AppThemeExt on BuildContext {
   Color get tipText     => isLight ? const Color(0xFF6D4C41) : const Color(0xFFD7A87A);
 
   Color get drawerDivider => isLight ? const Color(0xFFFFCC80) : const Color(0xFF4A2E10);
+  Color get onSurface    => isLight ? const Color(0xFF3E2000) : const Color(0xFFF0E0CC);
 
   List<Color> get heroGradient => isLight
       ? [const Color(0xFFE65100), const Color(0xFFFF6D00), const Color(0xFFFF8C00)]

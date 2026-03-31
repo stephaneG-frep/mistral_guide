@@ -7,6 +7,10 @@ import 'screens/prompts_screen.dart';
 import 'screens/features_screen.dart';
 import 'screens/chat_screen.dart';
 import 'screens/playground_screen.dart';
+import 'screens/codestral_screen.dart';
+import 'screens/apps_screen.dart';
+import 'screens/quiz_screen.dart';
+import 'screens/ai_agents_screen.dart';
 import 'screens/splash_screen.dart';
 
 // ─── Thèmes ──────────────────────────────────────────────────────────────────
@@ -94,6 +98,10 @@ class ThemeConfig {
       NavItem(icon: Icons.star_outline,          label: 'Fonctionnalités', color: Color(0xFFE64A19)),
       NavItem(icon: Icons.chat_bubble_outline,   label: 'Chat Mistral',    color: Color(0xFFFF6D00)),
       NavItem(icon: Icons.science_outlined,      label: 'Playground',      color: Color(0xFFFFAB40)),
+      NavItem(icon: Icons.terminal_outlined,     label: 'Codestral',       color: Color(0xFFFF8C00)),
+      NavItem(icon: Icons.apps_outlined,         label: 'Applications',    color: Color(0xFFE07000)),
+      NavItem(icon: Icons.quiz_outlined,         label: 'Quiz',            color: Color(0xFFFFB74D)),
+      NavItem(icon: Icons.hub_outlined,           label: 'IA & Agents',     color: Color(0xFFFFAB40)),
     ],
   );
 
@@ -115,6 +123,10 @@ class ThemeConfig {
       NavItem(icon: Icons.star_outline,          label: 'Fonctionnalités', color: Color(0xFFE64A19)),
       NavItem(icon: Icons.chat_bubble_outline,   label: 'Chat Mistral',    color: Color(0xFFBF360C)),
       NavItem(icon: Icons.science_outlined,      label: 'Playground',      color: Color(0xFFE64A19)),
+      NavItem(icon: Icons.terminal_outlined,     label: 'Codestral',       color: Color(0xFFE65100)),
+      NavItem(icon: Icons.apps_outlined,         label: 'Applications',    color: Color(0xFFBF360C)),
+      NavItem(icon: Icons.quiz_outlined,         label: 'Quiz',            color: Color(0xFFF57C00)),
+      NavItem(icon: Icons.hub_outlined,           label: 'IA & Agents',     color: Color(0xFFE65100)),
     ],
   );
 }
@@ -131,7 +143,7 @@ class MistralGuideApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<AppTheme>(
       valueListenable: themeNotifier,
-      builder: (context, theme, _) {
+      builder: (context, theme, child) {
         return MaterialApp(
           title: 'Mistral Guide',
           debugShowCheckedModeBanner: false,
@@ -162,6 +174,10 @@ class _MainScaffoldState extends State<MainScaffold> {
     FeaturesScreen(),
     ChatScreen(),
     PlaygroundScreen(),
+    CodestralScreen(),
+    AppsScreen(),
+    QuizScreen(),
+    AiAgentsScreen(),
   ];
 
   ThemeConfig get _cfg =>
@@ -189,7 +205,7 @@ class _MainScaffoldState extends State<MainScaffold> {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<AppTheme>(
       valueListenable: themeNotifier,
-      builder: (context, _, _) => Scaffold(
+      builder: (context, theme, child) => Scaffold(
         appBar: AppBar(
           iconTheme: const IconThemeData(color: Colors.white),
           title: Row(
@@ -246,15 +262,14 @@ class _MainScaffoldState extends State<MainScaffold> {
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 62,
-                  height: 62,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white30, width: 2),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset(
+                    'assets/images/mon_logo.jpeg',
+                    width: 110,
+                    height: 170,
+                    fit: BoxFit.cover,
                   ),
-                  child: const Icon(Icons.auto_awesome, size: 36, color: Colors.white),
                 ),
                 const SizedBox(height: 14),
                 const Text(
